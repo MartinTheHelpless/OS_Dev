@@ -1,9 +1,44 @@
-all:
-	nasm -f bin boot.asm -o OS_Compiled/boot.o
-	gcc -m32 -ffreestanding -O2 -Wall -Wextra -c kernel.c -o OS_Compiled/kernel.o
-	gcc -T linker.ld -o OS_Compiled/kernel.bin -m32 -ffreestanding -nostdlib OS_Compiled/kernel.o
-	cat OS_Compiled/boot.o OS_Compiled/kernel.bin > OS_Compiled/os-image.bin
-	mkdir -p OS_Compiled/boot/grub
-	cp OS_Compiled/os-image.bin OS_Compiled/boot/kernel.bin
-	cp grub.cfg OS_Compiled/boot/grub/grub.cfg
-	grub-mkrescue -o os-image.iso OS_Compiled
+# Compiler and flags
+AS=nasm
+CC=gcc
+CFLAGS=-ffreestanding -O2 -nostdlib
+LDFLAGS=-ffreestanding -nostdlib
+
+# Output directory
+OUTDIR=OS_Compiled
+
+# Default target
+all: $(OUTDIR)/os-image.iso
+
+# Create output directory
+$(OUTDIR):
+	mkdir -p $(OUTDIR)
+
+# Assemble the bootloader
+$(OUTDIR)/bootloader.bin: boot.asm | $(OUTDIR)
+	$(AS) -f bin boot.asm -o $(OUTDIR)/bootloader.bin
+
+# Compile the kernel
+$(OUTDIR)/kernel.o: kernel.c | $(OUTDIR)
+	$(CC) $(CFLAGS) -c kernel.c -o $(OUTDIR)/kernel.o
+
+# Link the kernel
+$(OUTDIR)/kernel.bin: $(OUTDIR)/kernel.o | $(OUTDIR)
+	$(CC) -Ttext 0x1000 -o $(OUTDIR)/kernel.bin $(LDFLAGS) $(OUTDIR)/kernel.o
+
+# Combine bootloader and kernel
+$(OUTDIR)/os-image.bin: $(OUTDIR)/bootloader.bin $(OUTDIR)/kernel.bin | $(OUTDIR)
+	cat $(OUTDIR)/bootloader.bin $(OUTDIR)/kernel.bin > $(OUTDIR)/os-image.bin
+
+# Create ISO image
+$(OUTDIR)/os-image.iso: $(OUTDIR)/os-image.bin | $(OUTDIR)
+	mkdir -p $(OUTDIR)/boot/grub
+	cp $(OUTDIR)/os-image.bin $(OUTDIR)/boot/kernel.bin
+	cp grub.cfg $(OUTDIR)/boot/grub/grub.cfg
+	grub-mkrescue -o $(OUTDIR)/os-image.iso $(OUTDIR)
+
+# Clean up
+clean:
+	rm -rf $(OUTDIR) os-image.iso
+
+.PHONY: all clean
