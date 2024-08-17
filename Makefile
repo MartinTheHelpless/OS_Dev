@@ -1,17 +1,11 @@
-# Makefile
+ASM=nasm 
 
-all: boot.bin kernel.bin
+SRC_DIR=src
+BUILD_DIR=build
 
-# Build the bootloader
-boot.bin: boot.asm
-	nasm -f bin -o boot.bin boot.asm
+$(BUILD_DIR)/main.img: $(BUILD_DIR)/main.bin
+	cp $(BUILD_DIR)/main.bin $(BUILD_DIR)/main.img
+	truncate -s 1440k $(BUILD_DIR)/main.img
 
-# Build the kernel
-kernel.bin: kernel.o
-	ld -o kernel.bin -T linker.ld kernel.o
-
-kernel.o: kernel.c
-	gcc -ffreestanding -nostdlib -c -o kernel.o kernel.c
-
-clean:
-	rm -f *.bin *.o
+$(BUILD_DIR)/main.bin: $(SRC_DIR)/boot.asm
+	$(ASM) $(SRC_DIR)/boot.asm -f bin -o $(BUILD_DIR)/main.bin
