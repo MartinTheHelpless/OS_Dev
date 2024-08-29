@@ -1,11 +1,5 @@
-ASM=nasm 
-
-SRC_DIR=src
-BUILD_DIR=build
-
-$(BUILD_DIR)/main.img: $(BUILD_DIR)/main.bin
-	cp $(BUILD_DIR)/main.bin $(BUILD_DIR)/main.img
-	truncate -s 1440k $(BUILD_DIR)/main.img
-
-$(BUILD_DIR)/main.bin: $(SRC_DIR)/boot.asm
-	$(ASM) $(SRC_DIR)/boot.asm -f bin -o $(BUILD_DIR)/main.bin
+all:
+	nasm -f bin boot.asm -o boot.bin
+	dd if=message.txt >> boot.bin
+	dd if=/dev/zero bs=512 count=1 >> boot.bin
+	qemu-system-x86_64 -hda boot.bin
