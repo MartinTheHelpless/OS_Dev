@@ -7,7 +7,8 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	dd if=./bin/boot.bin >> ./bin/os.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
 	dd if=/dev/zero bs=512 count=100 >> ./bin/os.bin
-	gdb -x gdbinit
+	qemu-system-x86_64 -hda ./bin/os.bin
+	#gdb -x gdbinit
 	clear
 
 ./bin/kernel.bin: $(FILES)
