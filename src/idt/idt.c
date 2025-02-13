@@ -29,7 +29,6 @@ void idt_zero()
 
 void idt_set(int interrupt_no, void *address)
 {
-
     struct idt_desc *desc = &idt_descriptors[interrupt_no];
 
     desc->offset_1 = (uint32_t)address & 0x0000ffff;
@@ -41,7 +40,6 @@ void idt_set(int interrupt_no, void *address)
 
 void idt_init()
 {
-
     memset(idt_descriptors, 0, sizeof(idt_descriptors));
 
     idtr_descriptor.limit = sizeof(idt_descriptors) - 1;

@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "idt/idt.h"
 #include "io/io.h"
+#include "memory/heap/kheap.h"
 
 uint16_t *video_mem = 0;
 
@@ -14,7 +15,18 @@ void kernel_main()
 
     print("Hello World!\n");
 
+    kheap_init();
+
     idt_init();
+
+    void *ptr = kmalloc(50);
+    void *ptr2 = kmalloc(5000);
+    void *ptr3 = kmalloc(10000);
+    void *ptr4 = kmalloc(50);
+
+    if (ptr || ptr2 || ptr3 || ptr4)
+    {
+    }
 }
 
 void init_terminal()
@@ -45,7 +57,6 @@ void terminal_write_character(const char c, int color)
 
 void terminal_write_message(const char *message, int color)
 {
-
     for (size_t i = 0; message[i] != 0; i++)
         terminal_write_character(message[i], 15);
 }
