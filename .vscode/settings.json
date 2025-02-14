@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "idt.h": "c"
+        "idt.h": "c",
+        "kheap.h": "c",
+        "memory.h": "c",
+        "paging.h": "c"
     }
 }

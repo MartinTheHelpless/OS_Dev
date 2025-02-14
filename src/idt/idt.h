@@ -25,4 +25,7 @@ void idt_set(int interrupt_no, void *address);
 
 void idt_init();
 
+void enable_interrupts();
+void diable_interrupts();
+
 #endif

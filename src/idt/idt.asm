@@ -7,6 +7,9 @@ global no_interrupt
 global idt_load
 global int21h
 
+global enable_interrupts
+global diable_interrupts
+
 idt_load:
     push ebp
     mov ebp, esp
@@ -32,3 +35,12 @@ no_interrupt:
     popad
     sti
     iret
+
+enable_interrupts:
+    sti
+    ret
+
+diable_interrupts:
+    cli
+    ret
+
