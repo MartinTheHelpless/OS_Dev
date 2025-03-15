@@ -21,6 +21,8 @@ void kernel_main()
 
     kheap_init();
 
+    disk_search_and_init();
+
     idt_init();
 
     kernel_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
