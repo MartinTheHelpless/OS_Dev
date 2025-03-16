@@ -15,7 +15,7 @@ int disk_read_sector(int lba, int total, void *buffer)
     outb(0x1F5, (unsigned char)lba >> 16);
     outb(0x1F7, 0x20);
 
-    unsigned short *ptr = (unsigned short)buffer;
+    unsigned short *ptr = (unsigned short *)buffer;
     for (int b = 0; b < total; ++b)
     {
         char c = insb(0x1F7);
